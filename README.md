@@ -7,21 +7,27 @@ Access the Bitget API with Ruby.
 ## Installation
 
 Add this line to your application's Gemfile:
+
 ```ruby
-  gem 'bitget.rb'
+gem 'bitget.rb'
 ```
+
 And then execute:
+
 ```bash
-  $ bundle
+$ bundle
 ```
+
 Or install it yourself as:
+
 ```bash
-  $ gem install bitget.rb
+$ gem install bitget.rb
 ```
 
 ## Usage
 
 ### Setup
+
 ```ruby
 bitget_client = Bitget::Client.new(
   api_key: 'api_key0',
@@ -90,6 +96,7 @@ yours, which is what lets a StringIO logger in a test, or a levelled one, or som
 is not a Logger at all, work as well as the above.
 
 ### Retrieve Info on All the Coins Traded
+
 ```ruby
 bitget_client.spot_public_coins
 # =>
@@ -117,6 +124,7 @@ bitget_client.spot_public_coins
 ```
 
 ### Retrieve Info for One of the Coins Traded
+
 ```ruby
 bitget_client.spot_public_coins(coin: 'BTC')
 # =>
@@ -157,19 +165,22 @@ bitget_client.spot_public_coins(coin: 'BTC')
 ```
 
 ### Get Account Information
+
 ```ruby
 bitget_client.spot_account_info
 ```
 
 ### Get Account Assets
+
 ```ruby
 bitget_client.spot_account_assets
 ```
+
 ```ruby
 bitget_client.spot_account_assets(coin: 'BTC')
 ```
 
-See https://www.bitget.com/api-doc/spot/intro for further information on endpoint arguments
+See https://www.bitget.com/api-doc/spot/intro for further information on endpoint arguments.
 
 ## Contributing
 

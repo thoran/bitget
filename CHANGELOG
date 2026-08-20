@@ -1,17 +1,31 @@
-# 20260820
+# CHANGELOG
+
+## 20260820
+
+0.6.3: The tidy up: the .gitignore, the CHANGELOG's name and form, and the README's code fences.
+
+1. ~ .gitignore: 47 lines, covering gem builds, bundler, RDoc and YARD output, .DS_Store, editor files, the Ruby version managers, test artefacts and .claude. The file existed and was empty, and nothing had since filled it in.
+2. ~ CHANGELOG.txt --> CHANGELOG, which is how the file is spelt. It is not in spec.files, so nobody installing the gem can tell.
+3. ~ CHANGELOG: /# 20260820/## 20260820/, and so for every date. A single hash made each date a top level heading, level with the file itself, so every date read as a title rather than as a section within one.
+4. ~ CHANGELOG: one heading per date. Nine headings covered seven dates, three of them being this release's own predecessors, so a reader counting days got two too many.
+5. + CHANGELOG: a # CHANGELOG title, and a blank line between each summary line and its first item, both of which the standard form has and this did not.
+6. ~ README.md: the code fences no longer indent their contents. Markdown ignores the indentation inside a fence, so it showed as leading whitespace in the rendered block.
+7. ~ Bitget::VERSION: /0.6.2/0.6.3/
+
 0.6.2: + Rakefile, so that this gem is run the way every other one here is.
-1. + Rakefile: Rake::TestTask over the suite, with default: :test. Every other gem here is run with rake and this one had none, the suite being run by naming test/test_all.rb by hand. month.rb took the same at its 0.11.3 and impuri at its 0.12.3, both as patches.
+
+1. + Rakefile: Rake::TestTask over the suite, with default: :test. There was none, the suite being run by naming test/test_all.rb by hand.
 2. ~ Bitget::VERSION: /0.6.1/0.6.2/
 
-# 20260820
 0.6.1: Two files renamed for case, git having recorded them differently from the filesystem.
+
 1. ~ lib/Bitget/VERSiON.rb --> lib/Bitget/VERSION.rb. The gemspec has required ./lib/Bitget/VERSION since 0.3.1, which resolved here only because the volume is case insensitive. On Linux it names a file which does not exist, so the gemspec could not load and the gem could not be built.
 2. ~ test/V2/client_test.rb --> test/V2/Client_test.rb. The same fault, and test/test_all.rb requires it by the upper case name.
 3. None of this shows on a case insensitive volume, which is why it stood since 0.3.1. git mv cannot make the change here either, refusing the destination as an alias of a path already in the index; it was done by removing the old path from the index and adding the new.
 4. ~ Bitget::VERSION: /0.6.0/0.6.1/
 
-# 20260820
 0.6.0: + Bitget::Configuration, and logging per client instead of per class.
+
 1. + Bitget::Configuration: api_key, api_secret, api_passphrase, debug and logger, with Bitget.configure, Bitget.configuration and Bitget.reset_configuration!. Settings had been per-client and per-class; they are now declared once and every client built afterwards reads them as its defaults.
 2. ~ Bitget::V2::Client: logging is per instance. @debug and @logger are taken from the options or from Bitget.configuration, and use_logging? is now !@logger.nil? — logging happens when there is somewhere to log to, so a flag and a logger can no longer disagree. Every setting is read the same way: the credentials are named arguments falling back upon nil, and the rest are given under options: and fall back upon the key being absent, nil being a value a caller may mean for a logger. The host is not among them: it is one value for this API, poloniex.rb and eodhd.rb hold theirs as a constant too, and a setting for it is a lever which can only be pulled wrongly, a signed request carrying the secret to a host nobody meant.
 3. - Bitget::V2::Client: the class-level log file machinery, being default_log_file_path, log_file_path, log_file and the class logger. Deciding where a log file lives, rotating it and creating its directory are the caller's, and it hands in whatever Logger it likes.
@@ -28,8 +42,11 @@
 14. + README.md: Configuration and Logging sections. 3 removes the built-in file logger, so the replacement is documented in the release which removes it: Logger.new(path, 'daily'' rotates by itself and wants only a FileUtils.mkdir_p first, which is the whole of what the client used to do for you.
 15. ~ Bitget::VERSION: /0.5.0/0.6.0/
 
-# 20250526
+
+## 20250526
+
 0.5.0: Implement all remaining spot endpoints and fix authenticated POST requests.
+
 1. ~ Bitget::V2::Client#log_request: + headers: argument
 2. ~ Bitget::V2::Client#do_request: Removed nil values (Double-check this isn't being done elsehwere.)
 3. ~ Bitget::V2::Client#do_request: Sorted arguments as per Bitget API requirements.
@@ -102,8 +119,11 @@ Added the following 'Wallet' methods:
 # @return [Type] Response containing:
 #   - field [Type] Description
 
-# 20250516
+
+## 20250516
+
 0.4.0: Implement the first couple of private endpoints and fix authentication.
+
 1. + Bitget::V2::Client#spot_account_info
 2. + Bitget::V2::Client#spot_account_assets
 3. ~ Bitget::V2::Client#message: There were 3 possible paths depending on the verb, not 2.
@@ -112,8 +132,11 @@ Added the following 'Wallet' methods:
 6. ~ Bitget::V2::Client#do_request: + @timestamp = nil, so the client can be reused for subsequent requests.
 7. ~ test/helper.rb: Use VCR's built-in filters to remove senstive data.
 
-# 20250402
+
+## 20250402
+
 0.3.1: Fix missing libraries.
+
 1. + lib/Thoran/Hash/XWwwFormUrlEncode/x_www_form_urlencode.rb
 2. + lib/Thoran/String/UrlEncode/url_encode.rb
 3. ~ lib/String/url_encode.rb: 0.2.1 --> 0.3.0
@@ -123,13 +146,17 @@ Added the following 'Wallet' methods:
 7. ~ bitget.rb.gemspec: Use Bitget::VERSION
 8. + test/test_all.rb
 
-# 20250329
+
+## 20250329
+
 0.3.0: + bitget.rb.gemspec, README.md
+
 1. + bitget.rb.gemspec
 2. + README.md
+## 20250326, 29
 
-# 20250326, 29
 0.2.0: Add a separate response handler with logging and error handling.
+
 1. + Bitget::V2::Client#handle_request
 2. + Bitget::V2::Client#do_request: Defer parsing the JSON to handle_request().
 3. ~ Bitget::V2::Client#spot_public_coins: Use handle_request().
@@ -137,19 +164,26 @@ Added the following 'Wallet' methods:
 5. ~ Bitget::V2::Client: + class methods for logging (log_file_path, default_log_file_path, log_file_path, log_file, logger)
 6. ~ Bitget::V2::Client: + instance methods for logging (log_args?, log_request, log_error)
 
-# 20250326
+
+## 20250326
+
 0.1.1: Add missing tests for supplying an argument to the coins endpoint.
+
 1. ~ test/client_test.rb
 2. ~ test/v2/client_test.rb
 
-# 20250323
+
+## 20250323
+
 0.1.0: Create directory structure and testing.
+
 1. + lib/Bitget/V2/Client.rb
 2. + lib/Bitget/Client.rb
 3. + lib/bitget.rb
 4. + Gemfile
 5. + test/*
+## 20250207, 08, 09
 
-# 20250207, 08, 09
 0.0.0: Introduce V2 endpoints.
+
 1. + CoinMarketCap::V2::Client
