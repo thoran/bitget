@@ -1,4 +1,4 @@
 # test/test_all.rb
 
-require_relative './client_test'
-require_relative './V2/client_test'
+require_relative './V2/Client_test'
+require_relative './Configuration_test'

@@ -30,6 +30,65 @@ bitget_client = Bitget::Client.new(
 )
 ```
 
+### Configuration
+
+Settings may be declared once, and every client built afterwards reads them as its defaults.
+
+```ruby
+Bitget.configure do |config|
+  config.api_key = 'api_key0'
+  config.api_secret = 'api_secret0'
+  config.api_passphrase = 'api_passphrase0'
+end
+
+bitget_client = Bitget::Client.new
+```
+
+The settings are `api_key`, `api_secret`, `api_passphrase`, `debug` and `logger`.
+
+Any of them may still be given per client, which wins over the configured value. The
+credentials are named arguments; the rest go under `options`.
+
+```ruby
+bitget_client = Bitget::Client.new(
+  api_key: 'api_key1',
+  options: {logger: Logger.new('bitget.log', 'daily')}
+)
+```
+
+### Logging
+
+A client logs when it has somewhere to log to, and not at all when it does not. Hand it any
+object answering to `#info` and `#error`; the standard library's `Logger` will do.
+
+```ruby
+require 'logger'
+
+Bitget.configure do |config|
+  config.logger = Logger.new($stdout)
+end
+```
+
+`Logger` rotates by itself, so a daily log file wants no more than its second argument. It
+will not create the directory, so make that first.
+
+```ruby
+require 'fileutils'
+require 'logger'
+
+log_file_path = File.expand_path(File.join(%w{~ log bitget log.txt}))
+FileUtils.mkdir_p(File.dirname(log_file_path))
+
+Bitget.configure do |config|
+  config.logger = Logger.new(log_file_path, 'daily')
+end
+```
+
+Before 0.6.0 the client chose the path, created the directory and rotated the file itself. It
+no longer does any of that: what is logged is the client's business and where it goes is
+yours, which is what lets a StringIO logger in a test, or a levelled one, or something which
+is not a Logger at all, work as well as the above.
+
 ### Retrieve Info on All the Coins Traded
 ```ruby
 bitget_client.spot_public_coins

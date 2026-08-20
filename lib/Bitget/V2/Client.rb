@@ -8,8 +8,8 @@ require 'json'
 require 'logger'
 require 'openssl'
 
+require_relative '../Configuration'
 require_relative '../Error'
-require_relative '../../Hash/x_www_form_urlencode'
 
 module Bitget
   module V2
@@ -18,28 +18,11 @@ module Bitget
       API_HOST = 'api.bitget.com'
 
       class << self
-        attr_writer :log_file_path
 
         def path_prefix
           '/api/v2'
         end
 
-        def default_log_file_path
-          File.join(%w{~ log bitget log.txt})
-        end
-
-        def log_file_path
-          File.expand_path(@log_file_path || default_log_file_path)
-        end
-
-        def log_file
-          FileUtils.mkdir_p(File.dirname(log_file_path))
-          File.open(log_file_path, File::WRONLY | File::APPEND | File::CREAT)
-        end
-
-        def logger
-          @logger ||= Logger.new(log_file, 'daily')
-        end
       end # class << self
 
       # Market
@@ -1824,15 +1807,22 @@ module Bitget
         :api_key,
         :api_secret,
         :api_passphrase,
-        :use_logging
+        :debug,
+        :logger
 
       private
 
-      def initialize(api_key:, api_secret:, api_passphrase:, use_logging: false)
-        @api_key = api_key
-        @api_secret = api_secret
-        @api_passphrase = api_passphrase
-        @use_logging = use_logging
+      # Anything not given here is taken from Bitget.configuration, so that a
+      # setting declared once need not be repeated at every call site.  The
+      # credentials fall back upon nil, having no meaningful nil value of their
+      # own; the options ask whether the key was given, nil being a value a
+      # caller may mean for a logger.
+      def initialize(api_key: nil, api_secret: nil, api_passphrase: nil, options: {})
+        @api_key = api_key || Bitget.configuration.api_key
+        @api_secret = api_secret || Bitget.configuration.api_secret
+        @api_passphrase = api_passphrase || Bitget.configuration.api_passphrase
+        @debug = options.key?(:debug) ? options[:debug] : Bitget.configuration.debug
+        @logger = options.key?(:logger) ? options[:logger] : Bitget.configuration.logger
       end
 
       def full_path(path)
@@ -1845,7 +1835,8 @@ module Bitget
       end
 
       def timestamp
-        @timestamp ||= (Time.now.to_f * 1000).to_i.to_s
+        # @timestamp ||= (Time.now.to_f * 1000).to_i.to_s
+        @timestamp ||= (Time.now.to_i * 1000).to_s
       end
 
       def message(verb:, path:, args:)
@@ -1884,6 +1875,10 @@ module Bitget
         }
       end
 
+      def use_logging?
+        !@logger.nil?
+      end
+
       def log_args?(args)
         !args.values.all?(&:nil?)
       end
@@ -1894,21 +1889,21 @@ module Bitget
           log_string << "  Args: #{args}\n"
         end
         log_string << "  Headers: #{headers}\n"
-        self.class.logger.info(log_string)
+        logger.info(log_string)
       end
 
       def log_response(code:, message:, body:)
         log_string = "Code: #{code}\n"
         log_string << "Message: #{message}\n"
         log_string << "Body: #{body}\n"
-        self.class.logger.info(log_string)
+        logger.info(log_string)
       end
 
       def log_error(code:, message:, body:)
         log_string = "Code: #{code}\n"
         log_string << "Message: #{message}\n"
         log_string << "Body: #{body}\n"
-        self.class.logger.error(log_string)
+        logger.error(log_string)
       end
 
       def do_request(verb:, path:, args: {})
@@ -1916,7 +1911,7 @@ module Bitget
         message = message(verb: verb, path: path, args: sorted_args)
         signature = signature(message)
         headers = headers(signature)
-        log_request(verb: verb, request_string: request_string(path), args: sorted_args, headers: headers) if @use_logging
+        log_request(verb: verb, request_string: request_string(path), args: sorted_args, headers: headers) if use_logging?
         @timestamp = nil
         HTTP.send(verb.to_s.downcase, request_string(path), sorted_args, headers)
       end
@@ -1932,23 +1927,11 @@ module Bitget
       def handle_response(response)
         if response.success?
           parsed_body = JSON.parse(response.body)
-          log_response(
-            code: response.code,
-            message: response.message,
-            body: response.body
-          ) if @use_logging
+          log_response(code: response.code, message: response.message, body: response.body) if use_logging?
           parsed_body
         else
-          log_error(
-            code: response.code,
-            message: response.message,
-            body: response.body
-          ) if @use_logging
-          raise Bitget::Error.new(
-            code: response.code,
-            message: response.message,
-            body: response.body
-          )
+          log_error(code: response.code, message: response.message, body: response.body) if use_logging?
+          raise Bitget::Error.new(code: response.code, message: response.message, body: response.body)
         end
       end
     end

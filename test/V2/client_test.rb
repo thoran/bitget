@@ -1,5 +1,4 @@
 require_relative '../helper'
-require_relative '../../lib/Bitget/V2/Client'
 
 describe Bitget::V2::Client do
   let(:api_key){ENV.fetch('BITGET_API_KEY', '<API_KEY>')}
@@ -12,6 +11,19 @@ describe Bitget::V2::Client do
       api_secret: api_secret,
       api_passphrase: api_passphrase
     )
+  end
+
+  describe "where a request is addressed" do
+    # Written out rather than built from API_HOST and .path_prefix, which would
+    # pass however wrong either of them was.
+    it "is the scheme, the host, the version prefix, and the path" do
+      _(client.send(:request_string, '/spot/public/coins')) \
+        .must_equal('https://api.bitget.com/api/v2/spot/public/coins')
+    end
+
+    it "takes its version prefix from the client, which is what makes V2 a class of its own" do
+      _(Bitget::V2::Client.path_prefix).must_equal('/api/v2')
+    end
   end
 
   # Market
@@ -998,12 +1010,12 @@ describe Bitget::V2::Client do
     let(:mock_error){Minitest::Mock.new}
 
     before do
-      client.use_logging = true
+      client.logger = Logger.new(StringIO.new)
       mock_error.expect(:call, nil, [], code: '418', message: "I'm a teapot", body: '')
     end
 
     after do
-      client.use_logging = false
+      client.logger = nil
       mock_error.verify
     end
 
@@ -1070,79 +1082,49 @@ describe Bitget::V2::Client do
   end
 
   describe "logging" do
+    let(:log){StringIO.new}
+
     before do
-      client.use_logging = true
-      FileUtils.rm_f(client.class.log_file_path)
-      client.class.instance_variable_set(:@log_file_path, nil)
-      client.class.instance_variable_set(:@logger, nil)
+      client.logger = Logger.new(log)
     end
 
     after do
-      client.use_logging = false
-      FileUtils.rm_f(client.class.log_file_path)
-    end
-
-    describe "logging configuration" do
-      it "uses the configured log file path" do
-        client.class.log_file_path = '/tmp/path'
-        _(client.class.log_file_path).must_equal(File.expand_path('/tmp/path'))
-      end
-
-      it "creates log directory if it doesn't exist" do
-        nested_path = File.join(Dir.tmpdir, 'bitget_test', 'nested', 'test.log')
-        client.class.log_file_path = nested_path
-        client.class.logger
-        _(File.directory?(File.dirname(nested_path))).must_equal(true)
-      end
-
-      it "creates a daily rotating logger" do
-        _(client.class.logger).must_be_kind_of(Logger)
-        _(File.exist?(client.class.log_file_path)).must_equal(true)
-      end
+      client.logger = nil
     end
 
     describe "request logging" do
       it "logs requests" do
-        client.class.logger
-        VCR.use_cassette('v2/spot/public/coins-when_coin_is_supplied') do
-          client.spot_public_coins(coin: 'BTC')
+        VCR.use_cassette("v2/spot/public/coins-when_coin_is_supplied") do
+          client.spot_public_coins(coin: "BTC")
         end
-        client.class.logger.close
-        log_content = File.read(client.class.log_file_path)
-        _(log_content).must_match(/GET https:\/\/api.bitget.com\/api\/v2\/spot\/public\/coins/)
-        _(log_content).must_match(/Args: \{coin: \"BTC\"}/)
-        _(log_content).must_match(/Headers: .+\"Content-Type\" => \"application\/json\"/)
+        _(log.string).must_match(/GET https:\/\/api.bitget.com\/api\/v2\/spot\/public\/coins/)
+        _(log.string).must_match(/Args: \{coin: "BTC"}/)
+        _(log.string).must_match(/Headers: .+"Content-Type" => "application\/json"/)
       end
     end
 
     describe "response logging" do
       it "logs responses" do
-        client.class.logger
-        VCR.use_cassette('v2/spot/public/coins-when_coin_is_supplied') do
-          client.spot_public_coins(coin: 'BTC')
+        VCR.use_cassette("v2/spot/public/coins-when_coin_is_supplied") do
+          client.spot_public_coins(coin: "BTC")
         end
-        client.class.logger.close
-        log_content = File.read(client.class.log_file_path)
-        _(log_content).must_match(/Code:/)
-        _(log_content).must_match(/Message:/)
-        _(log_content).must_match(/Body:/)
+        _(log.string).must_match(/Code:/)
+        _(log.string).must_match(/Message:/)
+        _(log.string).must_match(/Body:/)
       end
     end
 
     describe "error logging" do
       it "logs error responses" do
-        client.class.logger
-        VCR.use_cassette('v2/spot/public/coins-when_error_occurs') do
+        VCR.use_cassette("v2/spot/public/coins-when_error_occurs") do
           begin
-            client.spot_public_coins(coin: 'INVALID')
+            client.spot_public_coins(coin: "INVALID")
           rescue Bitget::Error
           end
         end
-        client.class.logger.close
-        log_content = File.read(client.class.log_file_path)
-        _(log_content).must_match(/Code:/)
-        _(log_content).must_match(/Message:/)
-        _(log_content).must_match(/Body:/)
+        _(log.string).must_match(/Code:/)
+        _(log.string).must_match(/Message:/)
+        _(log.string).must_match(/Body:/)
       end
     end
   end
