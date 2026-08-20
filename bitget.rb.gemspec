@@ -4,7 +4,6 @@ Gem::Specification.new do |spec|
   spec.name = 'bitget.rb'
 
   spec.version = Bitget::VERSION
-  spec.date = '2025-05-26'
 
   spec.summary = "Access the Bitget API with Ruby."
   spec.description = "Access the Bitget API with Ruby."

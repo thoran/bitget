@@ -2,6 +2,15 @@
 
 ## 20260820
 
+0.6.4: Adopt the version and gemspec tests, and unpin the date they caught.
+
+1. + test/VERSION_test.rb: that Bitget::VERSION is a String, that it is three numbers separated by dots, and that it matches the newest entry in the CHANGELOG. The last is the one with teeth — a release which moves the constant and forgets the CHANGELOG, or the reverse, fails here rather than shipping. Modelled on moby's, which is where this pair was settled.
+2. + test/gemspec_test.rb: that the specification validates, that it pins no date, that its version is Bitget::VERSION rather than a literal, and which runtime dependencies it declares.
+3. - bitget.rb.gemspec: spec.date, pinned to 2025-05-26. A build sets the date; pinning it means every gem built since has claimed to be from that day. This is what 2 caught on its first run, and putting the line back makes it fail again. month.rb removed the same at its 0.11.1 and impuri at its 0.9.0.
+4. Both tests require ../lib/Bitget/VERSION themselves. lib/Bitget.rb does not load it, so Bitget::VERSION is undefined to anything which only requires the library — the gemspec has always required the file directly. Left as it is here, that being a change to what the library exposes rather than to its tests.
+5. ~ test/test_all.rb: + the two above.
+6. ~ Bitget::VERSION: /0.6.3/0.6.4/
+
 0.6.3: The tidy up: the .gitignore, the CHANGELOG's name and form, and the README's code fences.
 
 1. ~ .gitignore: 47 lines, covering gem builds, bundler, RDoc and YARD output, .DS_Store, editor files, the Ruby version managers, test artefacts and .claude. The file existed and was empty, and nothing had since filled it in.
