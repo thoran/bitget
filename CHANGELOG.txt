@@ -1,4 +1,11 @@
 # 20260820
+0.6.1: Two files renamed for case, git having recorded them differently from the filesystem.
+1. ~ lib/Bitget/VERSiON.rb --> lib/Bitget/VERSION.rb. The gemspec has required ./lib/Bitget/VERSION since 0.3.1, which resolved here only because the volume is case insensitive. On Linux it names a file which does not exist, so the gemspec could not load and the gem could not be built.
+2. ~ test/V2/client_test.rb --> test/V2/Client_test.rb. The same fault, and test/test_all.rb requires it by the upper case name.
+3. None of this shows on a case insensitive volume, which is why it stood since 0.3.1. git mv cannot make the change here either, refusing the destination as an alias of a path already in the index; it was done by removing the old path from the index and adding the new.
+4. ~ Bitget::VERSION: /0.6.0/0.6.1/
+
+# 20260820
 0.6.0: + Bitget::Configuration, and logging per client instead of per class.
 1. + Bitget::Configuration: api_key, api_secret, api_passphrase, debug and logger, with Bitget.configure, Bitget.configuration and Bitget.reset_configuration!. Settings had been per-client and per-class; they are now declared once and every client built afterwards reads them as its defaults.
 2. ~ Bitget::V2::Client: logging is per instance. @debug and @logger are taken from the options or from Bitget.configuration, and use_logging? is now !@logger.nil? — logging happens when there is somewhere to log to, so a flag and a logger can no longer disagree. Every setting is read the same way: the credentials are named arguments falling back upon nil, and the rest are given under options: and fall back upon the key being absent, nil being a value a caller may mean for a logger. The host is not among them: it is one value for this API, poloniex.rb and eodhd.rb hold theirs as a constant too, and a setting for it is a lever which can only be pulled wrongly, a signed request carrying the secret to a host nobody meant.
