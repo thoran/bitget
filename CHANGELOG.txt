@@ -1,4 +1,9 @@
 # 20260820
+0.6.2: + Rakefile, so that this gem is run the way every other one here is.
+1. + Rakefile: Rake::TestTask over the suite, with default: :test. Every other gem here is run with rake and this one had none, the suite being run by naming test/test_all.rb by hand. month.rb took the same at its 0.11.3 and impuri at its 0.12.3, both as patches.
+2. ~ Bitget::VERSION: /0.6.1/0.6.2/
+
+# 20260820
 0.6.1: Two files renamed for case, git having recorded them differently from the filesystem.
 1. ~ lib/Bitget/VERSiON.rb --> lib/Bitget/VERSION.rb. The gemspec has required ./lib/Bitget/VERSION since 0.3.1, which resolved here only because the volume is case insensitive. On Linux it names a file which does not exist, so the gemspec could not load and the gem could not be built.
 2. ~ test/V2/client_test.rb --> test/V2/Client_test.rb. The same fault, and test/test_all.rb requires it by the upper case name.
