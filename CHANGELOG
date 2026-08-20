@@ -2,6 +2,12 @@
 
 ## 20260820
 
+0.6.5: + require of Bitget/VERSION from the entry point, so that the library carries its own version.
+
+1. + lib/bitget.rb: require_relative './Bitget/VERSION'. Bitget::VERSION was defined only for whoever required that file directly, which was the gemspec and nothing else, so anything requiring the library alone could not ask the library what version it was. impuri and measurand both require it from their entry point.
+2. ~ test/VERSION_test.rb and test/gemspec_test.rb: - their own require of ../lib/Bitget/VERSION, which 1 makes unnecessary. They reach the constant through the library now, so they would fail were the require in 1 removed, which is what makes them the test of it.
+3. ~ Bitget::VERSION: /0.6.4/0.6.5/
+
 0.6.4: Adopt the version and gemspec tests, and unpin the date they caught.
 
 1. + test/VERSION_test.rb: that Bitget::VERSION is a String, that it is three numbers separated by dots, and that it matches the newest entry in the CHANGELOG. The last is the one with teeth — a release which moves the constant and forgets the CHANGELOG, or the reverse, fails here rather than shipping. Modelled on moby's, which is where this pair was settled.

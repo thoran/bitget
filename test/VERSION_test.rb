@@ -1,5 +1,4 @@
 require_relative './helper'
-require_relative '../lib/Bitget/VERSION'
 
 describe Bitget do
   describe "VERSION" do

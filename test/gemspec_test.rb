@@ -1,5 +1,4 @@
 require_relative './helper'
-require_relative '../lib/Bitget/VERSION'
 
 describe 'bitget.rb.gemspec' do
   let(:spec){Gem::Specification.load(File.expand_path('../bitget.rb.gemspec', __dir__))}
