@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.files = [
     'bitget.rb.gemspec',
     'Gemfile',
+    'LICENSE',
     Dir['lib/**/*.rb'],
     'README.md',
     Dir['test/**/*.rb']
