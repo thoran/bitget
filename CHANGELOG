@@ -2,6 +2,12 @@
 
 ## 20260915
 
+0.6.8: + bitget.gemspec, so that the gem resolves under both names.
+
+1. + bitget.gemspec: bitget.rb.gemspec with /bitget.rb/bitget/ in spec.name and in spec.files.
+2. The Gemfile names its gems directly rather than through a bare gemspec directive, so nothing there has to choose between the two.
+3. ~ Bitget::VERSION: /0.6.7/0.6.8/
+
 0.6.7: ~ bitget.rb.gemspec: Tidy.
 
 1. ~ bitget.rb.gemspec: + the header comment; spec.require_paths moved above spec.files; the globs first among spec.files and the loose files alphabetically after; - the blank line between spec.name and spec.version.
