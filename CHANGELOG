@@ -2,6 +2,12 @@
 
 ## 20260915
 
+0.6.9: ~ test/gemspec_test.rb: cover both gemspecs, and that they agree.
+
+1. ~ test/gemspec_test.rb: the four examples run over bitget.gemspec as well, the describe naming each, + that each is named what it should be and ships the gemspec naming it. 0.6.8's second gemspec was uncovered, the file naming bitget.rb.gemspec alone.
+2. + test/gemspec_test.rb: three examples that the two agree — the same files but for the one naming each, the same declared fields, the same dependencies. The second gemspec is worth nothing if the two drift. 4 examples become 15.
+3. ~ Bitget::VERSION: /0.6.8/0.6.9/
+
 0.6.8: + bitget.gemspec, so that the gem resolves under both names.
 
 1. + bitget.gemspec: bitget.rb.gemspec with /bitget.rb/bitget/ in spec.name and in spec.files.

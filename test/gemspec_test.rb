@@ -1,21 +1,52 @@
 require_relative './helper'
 
-describe 'bitget.rb.gemspec' do
-  let(:spec){Gem::Specification.load(File.expand_path('../bitget.rb.gemspec', __dir__))}
+%w{bitget.rb bitget}.each do |name|
+  describe "#{name}.gemspec" do
+    let(:spec){Gem::Specification.load(File.expand_path("../#{name}.gemspec", __dir__))}
 
-  it "is a valid specification" do
-    _(spec.validate).must_equal(true)
+    it "is a valid specification" do
+      _(spec.validate).must_equal(true)
+    end
+
+    it "is named #{name}" do
+      _(spec.name).must_equal(name)
+    end
+
+    it "does not pin a date" do
+      _(spec.date).must_equal(Gem::Specification.new.date)
+    end
+
+    it "takes its version from Bitget::VERSION" do
+      _(spec.version.to_s).must_equal(Bitget::VERSION)
+    end
+
+    it "declares its runtime dependencies" do
+      _(spec.runtime_dependencies.map(&:name).sort).must_equal(%w{http.rb})
+    end
+
+    it "ships the gemspec which names it" do
+      _(spec.files).must_include("#{name}.gemspec")
+    end
+  end
+end
+
+# The second gemspec exists so that the gem resolves under both names, which is
+# worth nothing if the two drift.  Each is loaded rather than the files compared,
+# so that a difference is reported as the field it is.
+describe 'the two gemspecs' do
+  let(:bare){Gem::Specification.load(File.expand_path('../bitget.gemspec', __dir__))}
+  let(:dotted){Gem::Specification.load(File.expand_path('../bitget.rb.gemspec', __dir__))}
+
+  it "ship the same files but for the one naming each" do
+    _(bare.files - ['bitget.gemspec']).must_equal(dotted.files - ['bitget.rb.gemspec'])
   end
 
-  it "does not pin a date" do
-    _(spec.date).must_equal(Gem::Specification.new.date)
+  it "agree upon everything else declared" do
+    fields = %i{version summary description authors email homepage licenses required_ruby_version require_paths}
+    _(fields.collect{|field| bare.send(field).to_s}).must_equal(fields.collect{|field| dotted.send(field).to_s})
   end
 
-  it "takes its version from Bitget::VERSION" do
-    _(spec.version.to_s).must_equal(Bitget::VERSION)
-  end
-
-  it "declares its runtime dependencies" do
-    _(spec.runtime_dependencies.map(&:name).sort).must_equal(%w{http.rb})
+  it "agree upon their dependencies" do
+    _(bare.dependencies.collect(&:to_s).sort).must_equal(dotted.dependencies.collect(&:to_s).sort)
   end
 end
