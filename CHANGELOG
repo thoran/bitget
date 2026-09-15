@@ -2,6 +2,13 @@
 
 ## 20260915
 
+0.6.10: /thoran\/bitget.rb/thoran\/bitget/, the repository renamed.
+
+1. ~ bitget.rb.gemspec and bitget.gemspec: spec.homepage.
+2. ~ README.md: the fork URL.
+3. The gem keeps both its names, bitget.rb and bitget, the repository's name being no part of them.
+4. ~ Bitget::VERSION: /0.6.9/0.6.10/
+
 0.6.9: ~ test/gemspec_test.rb: cover both gemspecs, and that they agree.
 
 1. ~ test/gemspec_test.rb: the four examples run over bitget.gemspec as well, the describe naming each, + that each is named what it should be and ships the gemspec naming it. 0.6.8's second gemspec was uncovered, the file naming bitget.rb.gemspec alone.
