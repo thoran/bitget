@@ -1,8 +1,9 @@
+# bitget.rb.gemspec
+
 require_relative './lib/Bitget/VERSION'
 
 Gem::Specification.new do |spec|
   spec.name = 'bitget.rb'
-
   spec.version = Bitget::VERSION
 
   spec.summary = "Access the Bitget API with Ruby."
@@ -14,15 +15,15 @@ Gem::Specification.new do |spec|
   spec.license = 'Ruby'
 
   spec.required_ruby_version = '>= 2.7'
+  spec.require_paths = ['lib']
 
   spec.add_dependency('http.rb')
   spec.files = [
     'bitget.rb.gemspec',
+    Dir['lib/**/*.rb'],
+    Dir['test/**/*.rb'],
     'Gemfile',
     'LICENSE',
-    Dir['lib/**/*.rb'],
     'README.md',
-    Dir['test/**/*.rb']
   ].flatten
-  spec.require_paths = ['lib']
 end

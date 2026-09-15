@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 20260915
+
+0.6.7: ~ bitget.rb.gemspec: Tidy.
+
+1. ~ bitget.rb.gemspec: + the header comment; spec.require_paths moved above spec.files; the globs first among spec.files and the loose files alphabetically after; - the blank line between spec.name and spec.version.
+2. ~ Bitget::VERSION: /0.6.6/0.6.7/
+
+
 ## 20260822
 
 0.6.6: + LICENSE, which the gemspec has claimed without one being present.
