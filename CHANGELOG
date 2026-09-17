@@ -1,4 +1,14 @@
-# CHANGELOG
+# bitget/CHANGELOG
+
+## 20260918
+
+0.6.11: The names left behind by the rename.
+
+1. ~ bitget.gemspec: the heading comment named bitget.rb.gemspec, its twin, rather than itself. A heading comment names the file it heads.
+2. ~ CHANGELOG: + the title, # bitget/CHANGELOG.
+3. ~ README.md: /bitget.rb/bitget/ in the heading, the repository having been renamed at 0.6.10 while the heading kept the old name.
+4. ~ Bitget::VERSION: /0.6.10/0.6.11/
+
 
 ## 20260915
 

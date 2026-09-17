@@ -1,4 +1,4 @@
-# bitget.rb.gemspec
+# bitget.gemspec
 
 require_relative './lib/Bitget/VERSION'
 

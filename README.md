@@ -1,4 +1,4 @@
-# bitget.rb
+# bitget
 
 ## Description
 
