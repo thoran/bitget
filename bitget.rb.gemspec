@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
     'bitget.rb.gemspec',
     Dir['lib/**/*.rb'],
     Dir['test/**/*.rb'],
+    'CHANGELOG',
     'Gemfile',
     'LICENSE',
     'README.md',
