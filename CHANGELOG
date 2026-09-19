@@ -1,12 +1,19 @@
 # bitget/CHANGELOG
 
+## 20260919
+
+0.6.12: Correcting Claude's verbal diarrhoea.
+
+1. ~ CHANGELOG: Rewrite 0.6.11 entry.
+2. ~ Bitget::VERSION: /0.6.11/0.6.12/
+
 ## 20260918
 
-0.6.11: The names left behind by the rename.
+0.6.11: Clean up remaining rename items.
 
-1. ~ bitget.gemspec: the heading comment named bitget.rb.gemspec, its twin, rather than itself. A heading comment names the file it heads.
-2. ~ CHANGELOG: + the title, # bitget/CHANGELOG.
-3. ~ README.md: /bitget.rb/bitget/ in the heading, the repository having been renamed at 0.6.10 while the heading kept the old name.
+1. ~ bitget.gemspec: /# bitget.rb.gemspec/# bitget.gemspec/
+2. ~ CHANGELOG: /# bitget.rb/CHANGELOG/# bitget/CHANGELOG/
+3. ~ README.md: /bitget.rb/bitget/
 4. ~ Bitget::VERSION: /0.6.10/0.6.11/
 
 
