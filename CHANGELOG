@@ -2,6 +2,11 @@
 
 ## 20260925
 
+0.8.0: /lib/Bitget.rb/lib/bitget.rb/, a lowercase load file.
+
+1. /lib/Bitget.rb/lib/bitget.rb/: require 'bitget' and require 'bitget.rb' resolve on a case-sensitive filesystem, where only require 'Bitget' did.
+2. ~ Bitget::VERSION: /0.7.0/0.8.0/
+
 0.7.0: + Bitget::ERROR_CODES, generated from Bitget's published lists; + Bitget::Error#documented_message, #market_unavailable?.
 
 1. + bin/generate_error_codes: Writes lib/Bitget/ERROR_CODES.rb from the V2 REST, V2 WebSocket, and UTA REST lists, noting where they disagree and decoding HTML entities.
