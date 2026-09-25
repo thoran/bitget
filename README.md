@@ -95,6 +95,37 @@ no longer does any of that: what is logged is the client's business and where it
 yours, which is what lets a StringIO logger in a test, or a levelled one, or something which
 is not a Logger at all, work as well as the above.
 
+### Errors
+
+A request Bitget refuses raises `Bitget::Error`, which carries Bitget's own code and message
+from the response body where there is one, and the HTTP code and message where there is not.
+
+```ruby
+begin
+  bitget_client.spot_trade_place_order(symbol: 'XYZUSDT', side: 'buy', order_type: 'market', size: '10')
+rescue Bitget::Error => e
+  raise unless e.market_unavailable?
+  puts e.error_message
+end
+```
+
+`#market_unavailable?` is true for the codes in `Bitget::Error::MARKET_UNAVAILABLE_CODES`, which
+cover a market closed for maintenance, not yet open, or delisted.
+
+`#documented_message` looks the code up in `Bitget::ERROR_CODES`, which holds the error code
+lists Bitget publishes, one table for each: V2 REST, V2 WebSocket, and UTA REST.  The first
+of these to document the code answers.  The lists are incomplete, V2 REST returning codes
+which only the other two document, and the message Bitget returns does not always match
+what it documents, so prefer `#error_message` for display.  Regenerate the tables with
+`rake error_codes`.
+
+The lists do not always agree.  A code may be documented differently in different lists,
+as 40002 is; a code may appear more than once in the one list with different meanings, as
+40104 does in V2 REST, where its messages are kept as an array and `#documented_message`
+answers with each of them, numbered: `"(1) ...; (2) ..."`; and a code may have only Bitget's placeholder for a missing
+description, as 25220 does in V2 WebSocket, and is left out of that table.  The comment at
+the top of `lib/Bitget/ERROR_CODES.rb` lists each of these as at the last regeneration.
+
 ### Retrieve Info on All the Coins Traded
 
 ```ruby
