@@ -6,17 +6,7 @@ Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.libs << 'test'
   t.test_files = FileList['test/**/*_test.rb']
-  t.verbose = true
-  t.warning = false
+  t.warning = true
 end
 
 task default: :test
-
-desc "Run tests"
-task :spec => :test
-
-desc "Show version"
-task :version do
-  require_relative './lib/Bitget/VERSION'
-  puts "bitget.rb #{Bitget::VERSION}"
-end

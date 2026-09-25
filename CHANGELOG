@@ -2,6 +2,13 @@
 
 ## 20260925
 
+0.6.13: - test/test_all.rb; ~ Rakefile: minimal, with warnings.
+
+1. - test/test_all.rb: The Rakefile's FileList makes it redundant.
+2. ~ Rakefile: - the :spec and :version tasks, - t.verbose, t.warning = true.
+3. ~ bitget.gemspec, bitget.rb.gemspec: + 'Rakefile' to spec.files.
+4. ~ Bitget::VERSION: /0.6.12/0.6.13/
+
 0.6.12: + 'CHANGELOG' to spec.files; ~ CHANGELOG: Rewritten for clarity.
 
 1. ~ bitget.gemspec, bitget.rb.gemspec: + 'CHANGELOG' to spec.files.

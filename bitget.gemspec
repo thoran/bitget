@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
     'CHANGELOG',
     'Gemfile',
     'LICENSE',
+    'Rakefile',
     'README.md',
   ].flatten
 end
