@@ -1167,6 +1167,18 @@ describe Bitget::V2::Client do
         _(log.string).must_match(/Args: \{coin: "BTC"}/)
         _(log.string).must_match(/Headers: .+"Content-Type" => "application\/json"/)
       end
+
+      it "masks the credentials and not the signature" do
+        VCR.use_cassette("v2/spot/public/coins-when_coin_is_supplied") do
+          client.spot_public_coins(coin: "BTC")
+        end
+        %w{ACCESS-KEY ACCESS-PASSPHRASE}.each do |name|
+          _(log.string).must_include(%{"#{name}" => "[FILTERED]"})
+        end
+        _(log.string).wont_include(api_key)
+        _(log.string).wont_include(api_passphrase)
+        _(log.string).must_match(/"ACCESS-SIGN" => "[^\[]/)
+      end
     end
 
     describe "response logging" do

@@ -70,6 +70,9 @@ fell back upon them, the rest going under `options:`. Pass them to each client i
 A client logs when it has somewhere to log to, and not at all when it does not. Hand it any
 object answering to `#info` and `#error`; the standard library's `Logger` will do.
 
+A request is logged with its headers, the key and the passphrase being written as
+`[FILTERED]`.
+
 ```ruby
 require 'logger'
 

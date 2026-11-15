@@ -15,6 +15,7 @@ module Bitget
     class Client
 
       API_HOST = 'api.bitget.com'
+      CREDENTIAL_HEADERS = %w{ACCESS-KEY ACCESS-PASSPHRASE}
 
       class << self
 
@@ -1894,8 +1895,12 @@ module Bitget
         if log_args?(args)
           log_string << "  Args: #{args}\n"
         end
-        log_string << "  Headers: #{headers}\n"
+        log_string << "  Headers: #{masked(headers)}\n"
         logger.info(log_string)
+      end
+
+      def masked(headers)
+        headers.to_h{|name, value| [name, CREDENTIAL_HEADERS.include?(name) ? '[FILTERED]' : value]}
       end
 
       def log_response(code:, message:, body:)

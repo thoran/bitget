@@ -2,6 +2,15 @@
 
 ## 20261115
 
+0.9.1: Fix the request log exposing the credentials.
+
+1. + Bitget::V2::Client::CREDENTIAL_HEADERS: ACCESS-KEY and ACCESS-PASSPHRASE.
+2. + Bitget::V2::Client#masked: The credential headers' values are replaced with [FILTERED].
+3. ~ Bitget::V2::Client#log_request: The headers are logged through #masked. The key and passphrase were written to the log as sent.
+4. ~ test/V2/Client_test.rb: The logged key and passphrase are masked, and the signature is not.
+5. ~ README.md: The Logging section says the credential headers are masked.
+6. ~ Bitget::VERSION: /0.9.0/0.9.1/
+
 0.9.0: ~ Bitget::Client#initialize: - options:; - Bitget.configure, Bitget::Configuration.
 
 1. ~ Bitget::V2::Client#initialize: + debug:, + logger:, - options:. Nothing falls back upon Bitget.configuration, under which a client worked or failed according to what had run before it.
