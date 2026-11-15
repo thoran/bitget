@@ -2,6 +2,19 @@
 
 ## 20261115
 
+0.9.0: ~ Bitget::Client#initialize: - options:; - Bitget.configure, Bitget::Configuration.
+
+1. ~ Bitget::V2::Client#initialize: + debug:, + logger:, - options:. Nothing falls back upon Bitget.configuration, under which a client worked or failed according to what had run before it.
+2. ~ Bitget::V2::Client#initialize: It yields the client being built.
+3. + Bitget::V2::Client#validate_args: The credentials not given raise ArgumentError naming each of them, rather than as a TypeError from OpenSSL or a refusal from Bitget.
+4. ~ Bitget::V2::Client#do_request: The credentials are validated before the request is signed.
+5. - lib/Bitget/Configuration.rb: Bitget::Configuration, Bitget.configure, .configuration, .configuration= and .reset_configuration!.
+6. - test/Configuration_test.rb
+7. ~ test/V2/Client_test.rb: The debug: and logger: keywords and the block set a client; it defaults to nothing; missing credentials raise naming each, before any request; Bitget keeps no configuration.
+8. ~ test/helper.rb: - the reset of Bitget.configuration before each test.
+9. ~ README.md: The Setup and Logging sections give everything to the client, and the Configuration section is gone. The installation instructions name the gem bitget, not bitget.rb.
+10. ~ Bitget::VERSION: /0.8.1/0.9.0/
+
 0.8.1: Fix the tests failing to load WebMock.
 
 1. ~ test/helper.rb: + skip_webmocks_http_rb_adapter, so as to disambiguate the http gem from the http.rb gem.

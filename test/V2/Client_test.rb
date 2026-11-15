@@ -13,6 +13,72 @@ describe Bitget::V2::Client do
     )
   end
 
+  describe "#initialize" do
+    it "takes debug and logger as keywords" do
+      logger = Logger.new(StringIO.new)
+      client = Bitget::V2::Client.new(debug: true, logger: logger)
+      _(client.debug).must_equal(true)
+      _(client.logger).must_equal(logger)
+    end
+
+    it "defaults to no credentials, no debugging and no logger" do
+      client = Bitget::V2::Client.new
+      _(client.api_key).must_be_nil
+      _(client.api_secret).must_be_nil
+      _(client.api_passphrase).must_be_nil
+      _(client.debug).must_equal(false)
+      _(client.logger).must_be_nil
+      _(client.send(:use_logging?)).must_equal(false)
+    end
+
+    it "yields the client being built" do
+      yielded = nil
+      client = Bitget::V2::Client.new do |c|
+        yielded = c
+        c.api_key = 'a_key'
+        c.api_secret = 'a_secret'
+        c.api_passphrase = 'a_passphrase'
+      end
+      _(yielded).must_be_same_as(client)
+      _(client.api_key).must_equal('a_key')
+      _(client.api_secret).must_equal('a_secret')
+      _(client.api_passphrase).must_equal('a_passphrase')
+    end
+
+    it "is the same for Bitget::Client" do
+      client = Bitget::Client.new(api_key: 'a_key'){|c| c.api_secret = 'a_secret'}
+      _(client.api_key).must_equal('a_key')
+      _(client.api_secret).must_equal('a_secret')
+    end
+  end
+
+  describe "missing credentials" do
+    let(:credentials){{api_key: 'a_key', api_secret: 'a_secret', api_passphrase: 'a_passphrase'}}
+
+    %i{api_key api_secret api_passphrase}.each do |name|
+      it "raises naming #{name} before anything is sent" do
+        client = Bitget::V2::Client.new(**credentials.reject{|k, _| k == name})
+        error = _{client.spot_public_coins}.must_raise(ArgumentError)
+        _(error.message).must_equal("#{name} is missing.")
+      end
+    end
+
+    it "raises naming every one missing" do
+      client = Bitget::V2::Client.new(api_secret: 'a_secret')
+      error = _{client.spot_public_coins}.must_raise(ArgumentError)
+      _(error.message).must_equal('api_key, api_passphrase are missing.')
+    end
+  end
+
+  describe "Bitget" do
+    it "keeps no configuration of its own" do
+      %i{configure configuration configuration= reset_configuration!}.each do |name|
+        _(Bitget.respond_to?(name)).must_equal(false)
+      end
+      _(defined?(Bitget::Configuration)).must_be_nil
+    end
+  end
+
   describe "where a request is addressed" do
     # Written out rather than built from API_HOST and .path_prefix, which would
     # pass however wrong either of them was.

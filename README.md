@@ -9,7 +9,7 @@ Access the Bitget API with Ruby.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'bitget.rb'
+gem 'bitget'
 ```
 
 And then execute:
@@ -21,7 +21,7 @@ $ bundle
 Or install it yourself as:
 
 ```bash
-$ gem install bitget.rb
+$ gem install bitget
 ```
 
 ## Usage
@@ -36,31 +36,34 @@ bitget_client = Bitget::Client.new(
 )
 ```
 
-### Configuration
-
-Settings may be declared once, and every client built afterwards reads them as its defaults.
+Everything a client uses is given to it: `api_key:`, `api_secret:`, `api_passphrase:`,
+`debug:` and `logger:`. Each has a setter of its own, and the client is yielded while it is
+being built, so these are the same:
 
 ```ruby
-Bitget.configure do |config|
-  config.api_key = 'api_key0'
-  config.api_secret = 'api_secret0'
-  config.api_passphrase = 'api_passphrase0'
+bitget_client = Bitget::Client.new do |c|
+  c.api_key = 'api_key0'
+  c.api_secret = 'api_secret0'
+  c.api_passphrase = 'api_passphrase0'
 end
 
 bitget_client = Bitget::Client.new
+bitget_client.api_key = 'api_key0'
+bitget_client.api_secret = 'api_secret0'
+bitget_client.api_passphrase = 'api_passphrase0'
 ```
 
-The settings are `api_key`, `api_secret`, `api_passphrase`, `debug` and `logger`.
-
-Any of them may still be given per client, which wins over the configured value. The
-credentials are named arguments; the rest go under `options`.
+The client keeps nothing in common with any other, and reads nothing from the environment
+or from a file: where the settings come from is the program's business. Credentials not
+given raise at the first request, before anything is sent, naming each of them:
 
 ```ruby
-bitget_client = Bitget::Client.new(
-  api_key: 'api_key1',
-  options: {logger: Logger.new('bitget.log', 'daily')}
-)
+Bitget::Client.new(api_key: 'api_key0', api_secret: 'api_secret0').spot_public_coins
+# => ArgumentError: api_passphrase is missing.
 ```
+
+Before 0.9.0 the settings could be declared once with `Bitget.configure`, and every client
+fell back upon them, the rest going under `options:`. Pass them to each client instead.
 
 ### Logging
 
@@ -70,9 +73,12 @@ object answering to `#info` and `#error`; the standard library's `Logger` will d
 ```ruby
 require 'logger'
 
-Bitget.configure do |config|
-  config.logger = Logger.new($stdout)
-end
+bitget_client = Bitget::Client.new(
+  api_key: 'api_key0',
+  api_secret: 'api_secret0',
+  api_passphrase: 'api_passphrase0',
+  logger: Logger.new($stdout)
+)
 ```
 
 `Logger` rotates by itself, so a daily log file wants no more than its second argument. It
@@ -85,9 +91,7 @@ require 'logger'
 log_file_path = File.expand_path(File.join(%w{~ log bitget log.txt}))
 FileUtils.mkdir_p(File.dirname(log_file_path))
 
-Bitget.configure do |config|
-  config.logger = Logger.new(log_file_path, 'daily')
-end
+bitget_client.logger = Logger.new(log_file_path, 'daily')
 ```
 
 Before 0.6.0 the client chose the path, created the directory and rotated the file itself. It

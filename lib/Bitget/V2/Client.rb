@@ -8,7 +8,6 @@ require 'json'
 require 'logger'
 require 'openssl'
 
-require_relative '../Configuration'
 require_relative '../Error'
 
 module Bitget
@@ -1812,17 +1811,24 @@ module Bitget
 
       private
 
-      # Anything not given here is taken from Bitget.configuration, so that a
-      # setting declared once need not be repeated at every call site.  The
-      # credentials fall back upon nil, having no meaningful nil value of their
-      # own; the options ask whether the key was given, nil being a value a
-      # caller may mean for a logger.
-      def initialize(api_key: nil, api_secret: nil, api_passphrase: nil, options: {})
-        @api_key = api_key || Bitget.configuration.api_key
-        @api_secret = api_secret || Bitget.configuration.api_secret
-        @api_passphrase = api_passphrase || Bitget.configuration.api_passphrase
-        @debug = options.key?(:debug) ? options[:debug] : Bitget.configuration.debug
-        @logger = options.key?(:logger) ? options[:logger] : Bitget.configuration.logger
+      def initialize(api_key: nil, api_secret: nil, api_passphrase: nil, debug: false, logger: nil)
+        @api_key = api_key
+        @api_secret = api_secret
+        @api_passphrase = api_passphrase
+        @debug = debug
+        @logger = logger
+        yield(self) if block_given?
+      end
+
+      def validate_args(args)
+        missing_args = []
+        args.each do |arg_name, value|
+          missing_args << arg_name unless value
+        end
+        return if missing_args.empty?
+        aggregate_error = missing_args.join(', ')
+        copula = missing_args.count > 1 ? 'are' : 'is'
+        raise ArgumentError, "#{aggregate_error} #{copula} missing."
       end
 
       def full_path(path)
@@ -1907,6 +1913,7 @@ module Bitget
       end
 
       def do_request(verb:, path:, args: {})
+        validate_args(api_key: @api_key, api_secret: @api_secret, api_passphrase: @api_passphrase)
         sorted_args = args.reject{|_, v| v.nil?}.sort.to_h
         message = message(verb: verb, path: path, args: sorted_args)
         signature = signature(message)

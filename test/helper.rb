@@ -32,10 +32,3 @@ VCR.configure do |config|
   config.filter_sensitive_data('<API_SECRET>'){ENV['BITGET_API_SECRET'] }
   config.filter_sensitive_data('<API_PASSPHRASE>'){ENV['BITGET_API_PASSPHRASE']}
 end
-
-class Minitest::Test
-  def before_setup
-    super
-    Bitget.reset_configuration!
-  end
-end
