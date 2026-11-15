@@ -1,5 +1,13 @@
 # bitget/CHANGELOG
 
+## 20261115
+
+0.8.1: Fix the tests failing to load WebMock.
+
+1. ~ test/helper.rb: + skip_webmocks_http_rb_adapter, so as to disambiguate the http gem from the http.rb gem.
+2. ~ Bitget::VERSION: /0.8.0/0.8.1/
+
+
 ## 20260925
 
 0.8.0: /lib/Bitget.rb/lib/bitget.rb/, a lowercase load file.
