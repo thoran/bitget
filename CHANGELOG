@@ -1,5 +1,14 @@
 # bitget/CHANGELOG
 
+## 20261116
+
+0.9.2: ~ gemspec: + test fixtures
+
+1. ~ bitget.gemspec, bitget.rb.gemspec: spec.files: Dir['test/**/*.{rb,yml}'], not Dir['test/**/*.rb'], so that the tests ship with the cassettes they play back.
+2. ~ test/gemspec_test.rb: The cassettes ship.
+3. ~ Bitget::VERSION: /0.9.1/0.9.2/
+
+
 ## 20261115
 
 0.9.1: Fix the request log exposing the credentials.

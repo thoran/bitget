@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.files = [
     'bitget.gemspec',
     Dir['lib/**/*.rb'],
-    Dir['test/**/*.rb'],
+    Dir['test/**/*.{rb,yml}'],
     'CHANGELOG',
     'Gemfile',
     'LICENSE',

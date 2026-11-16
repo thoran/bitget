@@ -27,6 +27,10 @@ require_relative './helper'
     it "ships the gemspec which names it" do
       _(spec.files).must_include("#{name}.gemspec")
     end
+
+    it "ships the cassettes with the tests" do
+      _(spec.files).must_include('test/fixtures/vcr_cassettes/v2/spot/public/coins-when_coin_is_supplied.yml')
+    end
   end
 end
 
